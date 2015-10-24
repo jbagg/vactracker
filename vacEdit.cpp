@@ -293,14 +293,12 @@ void vacEditDialog::ok(void)
 	connect(link, SIGNAL(success()), link, SLOT(unlockUser()));
 	connect(link, SIGNAL(error()), link, SLOT(unlockUser()));
 
-	cmd = "user[" + link->getEmployee()->getID() + "].withdrawal[" + QString::number(id) + "].state=request";
-	cmd+= "&start=" + QString::number(startDay);
+	cmd = "user[" + link->getEmployee()->getID() + "].withdrawal[" + QString::number(id) + "].start=" + QString::number(startDay);
 	cmd+= "&end=" + QString::number(endDay);
 	cmd+= "&length=" + QString::number(length).replace('.', '#');
 	if (!edit)
-		cmd+= "&request_date=" + QString::number(QDate::currentDate().toJulianDay()) +'\n';
-	else
-		cmd+= '\n';
+		cmd+= "&request_date=" + QString::number(QDate::currentDate().toJulianDay());
+	cmd+= "&state=request\n";
 
 	link->tx(cmd.toUtf8());
 
