@@ -54,7 +54,7 @@ void Link::rx(void)
 {
 	qint32	i;
 
-	rxStream+= server.read(4096);
+	rxStream+= server.readAll();
 	QStringList cmds = rxStream.split(QRegExp("[\r\n]"));
 	for (i=0; i<cmds.size()-1; i++)
 	{
