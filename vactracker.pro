@@ -4,7 +4,7 @@
  HEADERS+= depositparser.h withdrawalparser.h userparser.h regionparser.h regionyearparser.h
  SOURCES= main.cpp parse.cpp link.cpp mainWindow.cpp vacEdit.cpp userEdit.cpp regionEdit.cpp discover.cpp pwdChange.cpp addDeposit.cpp
  SOURCES+= depositparser.cpp withdrawalparser.cpp userparser.cpp regionparser.cpp regionyearparser.cpp
- RC_FILE= vactracker.rc
+ win32: RC_ICONS = ptree.ico
 
 include($$PWD/qtzeroconf/qtzeroconf.pri)
 
