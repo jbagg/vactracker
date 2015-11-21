@@ -84,15 +84,21 @@ void Link::rx(void)
 }
 void Link::lockUser(void)
 {
+	connect(this, SIGNAL(error()), this, SLOT(stopSignals()));
 	tx("user[" + employee->getID() + "].lock=" + QString::number(employee->getVersion()) + "\n");
 }
 
 void Link::unlockUser(void)
 {
+	stopSignals();
+	tx("user[" + employee->getID() + "].unlock\n");
+}
+
+void Link::stopSignals(void)
+{
 	disconnect(this, SIGNAL(completed()), 0, 0);
 	disconnect(this, SIGNAL(success()), 0, 0);
 	disconnect(this, SIGNAL(error()), 0, 0);
-	tx("user[" + employee->getID() + "].unlock\n");
 }
 
 void Link::srvDisconnect(void)

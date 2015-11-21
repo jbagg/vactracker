@@ -94,6 +94,7 @@ signals:
 
 private slots:
 	void rx(void);
+	void stopSignals(void);
 	void srvDisconnect(void);
 	void checkChange(User *changedUser);
 
