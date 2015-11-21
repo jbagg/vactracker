@@ -74,7 +74,7 @@ Discover::Discover(Link *lk, mainWindow *win)
 	msgbox.setIcon(QMessageBox::Critical);
 	msgbox.setStandardButtons(QMessageBox::Ok);
 
-	connect(&discover, SIGNAL(itemAdded(QZeroConfItem *)), this, SLOT(discovery(QZeroConfItem *)));
+	connect(&discover, SIGNAL(serviceAdded(QZeroConfService *)), this, SLOT(startLogin(QZeroConfService *)));
 	connect(&discover, SIGNAL(error(QZeroConf::error_t)), this, SLOT(error(QZeroConf::error_t)));
 	connect(&timeout, SIGNAL(timeout()), this, SLOT(discoveryTimedOut()));
 }
@@ -97,10 +97,7 @@ void Discover::keyPressEvent(QKeyEvent *e)
 void Discover::discoveryTimedOut(void)
 {
 	timeout.stop();
-	if (host && (host->ip.size() || host->ipv6.size()))
-		startLogin();
-	else
-		error(QZeroConf::browserFailed);
+	error(QZeroConf::browserFailed);
 }
 
 void Discover::error(QZeroConf::error_t)
@@ -110,29 +107,15 @@ void Discover::error(QZeroConf::error_t)
 	exit(1);
 }
 
-void Discover::discovery(QZeroConfItem *item)
-{
-	if (!host)
-		host = item;
-	if (item->ip.size() && item->ipv6.size())
-		startLogin();
-}
-
-void Discover::startLogin(void)
+void Discover::startLogin(QZeroConfService *zcs)
 {
 	timeout.stop();
-	if (host->ipv6.size() && link->srvConnect(host->ipv6, host->port)) {
-		qDebug("IPv6 Connection");
-	}
-	else if (host->ip.size() && link->srvConnect(host->ip, host->port)) {
-		qDebug("IPv4 Connection");
-	}
-	else {
+	if (!link->srvConnect(zcs->ip.toString(), zcs->port)) {
 		msgbox.setText(tr("TCP connection to server failed - exiting"));
 		msgbox.exec();
 		exit(1);
 	}
-	disconnect(&discover, SIGNAL(itemAdded(QZeroConfItem *)), 0, 0);
+	disconnect(&discover, SIGNAL(serviceAdded(QZeroConfService *)), 0, 0);
 	discover.stopBrowser();
 	pwd.setFocus();
 	show();

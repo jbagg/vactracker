@@ -37,7 +37,7 @@
 #include <QHostAddress>
 #include "mainWindow.h"
 #include "link.h"
-#include "qtzeroconf/qzeroconf.h"
+#include "qzeroconf.h"
 
 class mainWindow;
 
@@ -57,7 +57,7 @@ private:
 	mainWindow *window;
 	Link *link;
 	QZeroConf discover;
-	QZeroConfItem *host;
+	QZeroConfService *host;
 	QTimer timeout;
 
 
@@ -66,8 +66,7 @@ signals:
 private slots:
 	void discoveryTimedOut(void);
 	void error(QZeroConf::error_t);
-	void discovery(QZeroConfItem *item);
-	void startLogin(void);
+	void startLogin(QZeroConfService *zcs);
 	void ok(void);
 	void cancel(void);
 	void loginFailed(void);
