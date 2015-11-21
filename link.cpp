@@ -33,7 +33,7 @@ Link::Link()
 	employee = NULL;
 	succeeded = 0;
 
-	actions << "managers" << "regionList" << "error";
+	actions << "managers" << "regionList";
 
 	connect(&server, SIGNAL(readyRead()), this, SLOT(rx()));
 	connect(&server, SIGNAL(disconnected()), this, SLOT(srvDisconnect()));
@@ -63,9 +63,11 @@ void Link::rx(void)
 			emit completed();
 			emit success();
 		}
-		else if (cmds[i].contains("error=")) {
+		else if (cmds[i].contains("error")) {
 			succeeded = 0;
 			emit completed();
+			if (cmds[i].section('=', 1).size())
+				emit error(cmds[i].section('=', 1));
 			emit error();
 		}
 		else
@@ -142,10 +144,6 @@ bool Link::parseAction(QObject *, QString cmd, QString value, qint32 n)
 		if (value.size()) {
 			regionList.append(value);
 		}
-	}
-	else if (cmd == "error" && value.size()) {
-		emit error(value);
-		emit error();
 	}
 
 	return found;
