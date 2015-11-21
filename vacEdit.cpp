@@ -54,7 +54,11 @@ vacEditDialog::vacEditDialog(Link *lk, mainWindow *win)
 	//okButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 	cancelButton->setText(tr("Cancel"));
 	halfDay.setText(tr("Half Day"));
+	#ifdef Q_OS_ANDROID
+	weekendCkb.setText(tr("Inc Weekends"));
+	#else
 	weekendCkb.setText(tr("Include Weekends"));
+	#endif
 
 	leftLayout->addWidget(&calendar);
 	rightLayout->addWidget(&start, 0, 0);
@@ -191,7 +195,11 @@ void vacEditDialog::refreshStartLabel(void)
 	date = QDate::fromJulianDay(startDay);
 	calendar.setMinimumDate(date);
 	if (startDay == START_UNSET)
+		#ifdef Q_OS_ANDROID
+		start.setText(tr("Start") + ": " + tr("Select"));
+		#else
 		start.setText(tr("Start") + ": " + tr("Select start date"));
+		#endif
 	else
 		start.setText(tr("Start") + ": " + mainWindow::getDayMonthStringfromDate(date));
 }
@@ -214,7 +222,11 @@ void vacEditDialog::refreshEndLabel(void)
 	if (endDay == END_UNSET && startDay == START_UNSET)
 		end.setText(tr("End") + ":                         ");
 	else if (endDay == END_UNSET)
+		#ifdef Q_OS_ANDROID
+		end.setText(tr("End") + ": " + tr("Select"));
+		#else
 		end.setText(tr("End") + ": " + tr("Select end date"));
+		#endif
 	else
 		end.setText(tr("End") + ": " + mainWindow::getDayMonthStringfromDate(date));
 }

@@ -46,17 +46,19 @@ Discover::Discover(Link *lk, mainWindow *win)
 
 	QGridLayout *mainLayout = new QGridLayout;
 
+	mainLayout->setRowStretch(i++, 1);		// center grid on full screen (Android)
+
 	label = new QLabel(tr("User Name") + ':');
 	mainLayout->addWidget(label, i, 0, Qt::AlignRight);
 	mainLayout->addWidget(&userID, i++, 1, Qt::AlignLeft);
+	#ifndef Q_OS_ANDROID
 	userID.setText(QDir::home().dirName().section('.', 0, 0));
+	#endif
 
 	label = new QLabel(tr("Password") + ':');
 	mainLayout->addWidget(label, i, 0, Qt::AlignRight);
 	mainLayout->addWidget(&pwd, i++, 1, Qt::AlignLeft);
 	pwd.setEchoMode(QLineEdit::Password);
-
-	mainLayout->setRowStretch(i++, 1);
 
 	QPushButton *okButton = new QPushButton;
 	okButton->setText(tr("Ok"));
@@ -67,6 +69,8 @@ Discover::Discover(Link *lk, mainWindow *win)
 	cancelButton->setText(tr("Cancel"));
 	mainLayout->addWidget(cancelButton, i, 1, Qt::AlignLeft);
 	connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancel()));
+
+	mainLayout->setRowStretch(++i, 1);		// center grid on full screen (Android)
 
 	setLayout(mainLayout);
 
@@ -119,8 +123,11 @@ void Discover::startLogin(QZeroConfService *zcs)
 	discover.stopBrowser();
 	pwd.setFocus();
 	show();
+
+	#ifndef Q_OS_ANDROID
 	QDesktopWidget screen;
 	move((screen.screenGeometry().width() - size().width())/2, (screen.screenGeometry().height() - size().height())/2);
+	#endif
 }
 
 void Discover::cancel(void)

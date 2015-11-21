@@ -44,6 +44,8 @@ pwdChangeDialog::pwdChangeDialog(Link *lk, mainWindow *win)
 
 	QGridLayout *mainLayout = new QGridLayout;
 
+	mainLayout->setRowStretch(i++, 1);		// center grid on full screen (Android)
+
 	label = new QLabel(tr("Password") + ':');
 	mainLayout->addWidget(label, i, 0, Qt::AlignRight);
 	mainLayout->addWidget(&pwd, i++, 1, Qt::AlignLeft);
@@ -53,8 +55,6 @@ pwdChangeDialog::pwdChangeDialog(Link *lk, mainWindow *win)
 	mainLayout->addWidget(label, i, 0, Qt::AlignRight);
 	mainLayout->addWidget(&pwdConfirm, i++, 1, Qt::AlignLeft);
 	pwdConfirm.setEchoMode(QLineEdit::Password);
-
-	mainLayout->setRowStretch(i++, 1);
 
 	QPushButton *okButton = new QPushButton;
 	okButton->setText(tr("Ok"));
@@ -69,6 +69,8 @@ pwdChangeDialog::pwdChangeDialog(Link *lk, mainWindow *win)
 	resetButton.setText(tr("Reset"));
 	mainLayout->addWidget(&resetButton, i, 2, Qt::AlignLeft);
 	connect(&resetButton, SIGNAL(clicked()), this, SLOT(reset()));
+
+	mainLayout->setRowStretch(++i, 1);		// center grid on full screen (Android)
 
 	setLayout(mainLayout);
 
@@ -94,8 +96,10 @@ void pwdChangeDialog::locked(void)
 	else
 		resetButton.hide();
 	show();
+	#ifndef Q_OS_ANDROID
 	QDesktopWidget screen;
 	move((screen.screenGeometry().width() - size().width())/2, (screen.screenGeometry().height() - size().height())/2);
+	#endif
 }
 
 void pwdChangeDialog::cancel(void)

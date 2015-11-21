@@ -88,7 +88,11 @@ void mainWindow::buildGui(void)
 	cancel.setText(tr("Cancel"));
 	approve.setText(tr("Approve"));
 	reject.setText(tr("Reject"));
+	#ifdef Q_OS_ANDROID
+	newVacBtn.setText(tr("Request"));
+	#else
 	newVacBtn.setText(tr("New Vacation Request"));
+	#endif
 	chgPwd.setText(tr("Change Password"));
 
 	summaryBox.setTitle(tr("Summary"));
@@ -116,7 +120,6 @@ void mainWindow::buildGui(void)
 	withdrawalLayout->addWidget(&stateValue, 0, 1, Qt::AlignLeft);
 	withdrawalLayout->addWidget(&startLabel, 1, 0, Qt::AlignRight);
 	withdrawalLayout->addWidget(&startValue, 1, 1, Qt::AlignLeft);
-	withdrawalLayout->addWidget(&chgVac, 1, 2, Qt::AlignHCenter);
 	withdrawalLayout->addWidget(&endLabel, 2, 0, Qt::AlignRight);
 	withdrawalLayout->addWidget(&endValue, 2, 1, Qt::AlignLeft);
 	withdrawalLayout->addWidget(&lengthLabel, 3, 0, Qt::AlignRight);
@@ -127,12 +130,16 @@ void mainWindow::buildGui(void)
 	withdrawalLayout->addWidget(&approvedDateValue, 5, 1, Qt::AlignLeft);
 	withdrawalLayout->addWidget(&approvedByLabel, 6, 0, Qt::AlignRight);
 	withdrawalLayout->addWidget(&approvedByValue, 6, 1, Qt::AlignLeft);
+	#ifndef Q_OS_ANDROID
+	withdrawalLayout->addWidget(&chgVac, 1, 2, Qt::AlignHCenter);
 	withdrawalLayout->addWidget(&cancel, 6, 2, Qt::AlignHCenter);
 	withdrawalLayout->addWidget(&approve, 7, 1, Qt::AlignHCenter);
 	withdrawalLayout->addWidget(&reject, 7, 2, Qt::AlignHCenter);
+	#endif
 	withdrawalBox.setLayout(withdrawalLayout);
 	withdrawalBox.hide();
 
+	#ifndef Q_OS_ANDROID
 	QMenu *userMenu = new QMenu(tr("Employees"));
 	userMenu->addAction(tr("Add Employee"), this, SLOT(newUserSelected()));
 	userMenu->addAction(tr("Edit Employee"), this, SLOT(editUserSelected()));
@@ -141,14 +148,23 @@ void mainWindow::buildGui(void)
 	regionMenu->addAction(tr("Edit Region"), regionEdit, SLOT(prep()));
 	menu.addMenu(userMenu);
 	menu.addMenu(regionMenu);
+	#endif
 
 	//infoLayout->setAlignment(Qt::AlignTop);
 	summaryBox.setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+#ifndef Q_OS_ANDROID
 	infoLayout->addWidget(&summaryBox);
 	infoLayout->addWidget(&yearLabel);
 	infoLayout->addWidget(&withdrawalBox);
 	infoLayout->addWidget(&depositBox);
+#endif
 	infoLayout->addWidget(&newVacBtn);
+#ifdef Q_OS_ANDROID
+	infoLayout->addWidget(&chgVac);
+	infoLayout->addWidget(&cancel);
+	infoLayout->addWidget(&approve);
+	infoLayout->addWidget(&reject);
+#endif
 	infoLayout->addStretch();
 	infoLayout->addWidget(&chgPwd);
 	historyLayout->addWidget(&employeeSelector);
@@ -307,7 +323,7 @@ void mainWindow::makeRunningBalance(void)
 		if ((*it)->type() == DepositItem) {
 			depositItem = static_cast<QTreeDepositItem*>(*it);
 			balance+= depositItem->deposit->getAmount();
-			(*it)->setText(3, QString::number(balance));
+			(*it)->setText(3, "  " + QString::number(balance));
 		}
 		else if ((*it)->type() == WithdrawalItem) {
 			withdrawalItem = static_cast<QTreeWithdrawalItem*>(*it);
@@ -318,7 +334,7 @@ void mainWindow::makeRunningBalance(void)
 				case WDRL_REJECTED: break;
 				case WDRL_CANCELLED: break;
 			}
-			(*it)->setText(3, QString::number(balance));
+			(*it)->setText(3, "  " + QString::number(balance));
 		}
 		++it;
 	}
@@ -327,18 +343,22 @@ void mainWindow::makeRunningBalance(void)
 void mainWindow::showDetails(void)
 {
 	QTreeWidgetItem *item;
+	#ifndef Q_OS_ANDROID
 	QTreeDepositItem *depositItem;
+	#endif
 	QTreeWithdrawalItem *withdrawalItem;
 
 	item = history.currentItem();
-	if (item->type() == DepositItem) {
-		depositItem = static_cast<QTreeDepositItem*>(item);
-		showDeposit(depositItem->deposit);
-	}
-	else if (item->type() == WithdrawalItem) {
+	if (item->type() == WithdrawalItem) {
 		withdrawalItem = static_cast<QTreeWithdrawalItem*>(item);
 		showWithdrawal(withdrawalItem->withdrawal);
 	}
+	#ifndef Q_OS_ANDROID
+	else if (item->type() == DepositItem) {
+		depositItem = static_cast<QTreeDepositItem*>(item);
+		showDeposit(depositItem->deposit);
+	}
+	#endif
 }
 
 void mainWindow::showDeposit(Deposit *deposit)
@@ -354,8 +374,10 @@ void mainWindow::showWithdrawal(Withdrawal *withdrawal)
 {
 	QDate date;
 
+	#ifndef Q_OS_ANDROID
 	depositBox.hide();
 	withdrawalBox.show();
+	#endif
 
 	index = withdrawal->getID();
 	switch (withdrawal->getState()) {
@@ -449,8 +471,11 @@ void mainWindow::doChange(void)
 		vacEdit->setEdit(link.getEmployee()->getWithdrawalAt(index), index);
 	setEnabled(0);
 	vacEdit->show();
+
+	#ifndef Q_OS_ANDROID
 	QDesktopWidget screen;
 	vacEdit->move((screen.screenGeometry().width() - vacEdit->size().width())/2, (screen.screenGeometry().height() - vacEdit->size().height())/2);
+	#endif
 }
 
 void mainWindow::newUserSelected()
@@ -583,5 +608,9 @@ void mainWindow::closeEvent(QCloseEvent *event)
 
 QString mainWindow::getDayMonthStringfromDate(QDate date)
 {
+	#ifdef Q_OS_ANDROID
+	return QDate::shortMonthName(date.month()) + ' ' + QString::number(date.day());
+	#else
 	return QDate::longDayName(date.dayOfWeek()) + ", " + QDate::longMonthName(date.month()) + ' ' + QString::number(date.day());
+	#endif
 }

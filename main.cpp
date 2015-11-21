@@ -35,13 +35,29 @@ int main(int argc, char *argv[])
 	QStringList args = app.arguments();
 
 	app.setApplicationName("Vacation Tracker");
-	app.setApplicationVersion("0.1");
+	app.setApplicationVersion("0.8rc1");
 
 	if (args.size() == 2 && args.at(1) == "--version")
 	{
 		qDebug() << app.applicationName().toUtf8() << app.applicationVersion().toUtf8();
 		return 0;
 	}
+
+/*	"QMainWindow {\n"
+	"	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 green, stop:1 #0d4055);\n"
+	"	color: white;\n"
+	"}\n"
+	"QWidget {\n"
+	"	background-color: #0d4055;\n"
+	"	color: white;\n"
+	"}\n"	*/
+	#ifdef Q_OS_ANDROID
+	app.setStyleSheet("\n"
+	"QTreeWidget, QComboBox {\n"
+	"	font-size: 36px;\n"
+	"}\n"
+	);
+	#endif
 
 	mainWindow window;
 
