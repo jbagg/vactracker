@@ -71,7 +71,6 @@ public slots:
 private:
 	bool parseObjects(QObject *ref, QString type, QString id, QString tail);
 	bool parseAction(QObject *ref, QString cmd, QString value, qint32 n);
-	QString rxStream;
 	QTimer timeout;
 	QTcpSocket server;
 	bool succeeded;

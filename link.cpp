@@ -52,34 +52,27 @@ void Link::tx(QString cmd)
 
 void Link::rx(void)
 {
-	qint32	i;
-
-	rxStream+= server.readAll();
-	QStringList cmds = rxStream.split(QRegExp("[\r\n]"));
-	for (i=0; i<cmds.size()-1; i++)
+	while (server.canReadLine())
 	{
-		if (cmds[i] == "ok") {
+		QString line = server.readLine();
+		line.chop(1); // remove '\n'
+		if (!line.size())
+			continue;
+		if (line == "ok") {
 			succeeded = 1;
 			emit completed();
 			emit success();
 		}
-		else if (cmds[i].contains("error")) {
+		else if (line.contains("error")) {
 			succeeded = 0;
 			emit completed();
-			if (cmds[i].section('=', 1).size())
-				emit error(cmds[i].section('=', 1));
+			if (line.section('=', 1).size())
+				emit error(line.section('=', 1));
 			emit error();
 		}
 		else
-			parseCmd(this, cmds[i]);
+			parseCmd(this, line);
 
-	}
-
-	if (cmds.size() > 1)
-	{
-		rxStream.clear();
-		if (cmds.at(i).size())		// if string size != 0, there is a partial command leftover
-			rxStream+= cmds.at(i);
 	}
 }
 void Link::lockUser(void)
