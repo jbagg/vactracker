@@ -82,6 +82,7 @@ regionEditDialog::regionEditDialog(Link *lk, mainWindow *win)
 	label = new QLabel(tr("Select Year"));
 	yearLayout->addWidget(label);
 	yearLayout->addWidget(&yearSelector);
+	connect(&yearSelector, SIGNAL(currentIndexChanged(int)), this, SLOT(yearChanged(int)));
 
 	label = new QLabel(tr("New Year"));
 	yearLayout->addWidget(label);
@@ -231,7 +232,6 @@ void regionEditDialog::updateYears(void)
 	QMap <QString, RegionYear *>::iterator rY;
 
 	disconnect(link, SIGNAL(completed()), 0, 0);
-	disconnect(&yearSelector, SIGNAL(currentIndexChanged(int)), this, SLOT(yearChanged(int)));
 
 	n = -1;
 	newest = i = 0;
@@ -258,7 +258,6 @@ void regionEditDialog::updateYears(void)
 		yearSelector.setCurrentIndex(n);
 		yearEntry.setText(QString::number(newest+1));
 		yearChanged(n);
-		connect(&yearSelector, SIGNAL(currentIndexChanged(int)), this, SLOT(yearChanged(int)));
 	}
 }
 
@@ -424,7 +423,6 @@ void regionEditDialog::cancel(void)
 	disconnect(link, SIGNAL(completed()), 0, 0);
 	if (regionIndex >= 0 && regionIndex < link->regionListCount())
 		link->tx("region[" + link->getRegionIdAt(regionIndex) + "].unlock\n");
-	disconnect(&yearSelector, SIGNAL(currentIndexChanged(int)), this, SLOT(yearChanged(int)));
 	disconnect(&regionSelector, SIGNAL(currentIndexChanged(int)), this, SLOT(changeRegion(int)));
 	yearSelector.clear();
 	stats.clear();
