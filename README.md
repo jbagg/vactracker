@@ -1,7 +1,7 @@
 
 Vacation Tracker is used to tracking employee vacation days in small and medium sized businesses.  The Client is used in combination with [Vacation Tracker Daemon](https://github.com/jbagg/vactrackerd)
 
-###Features
+### Features
 
 * Managers get email notifications when their employee makes a vacation request.
 * Employees get email notifications when their manager approves or rejects their vacation request.
@@ -15,7 +15,7 @@ Vacation Tracker is used to tracking employee vacation days in small and medium 
 * The Client GUI uses ZeroConf to discover the server / daemon, so no configuration is necessary on the employees desktops.
 * Cross platform - works on Windows, Mac, Linux and Android.
 
-###Language
+### Language
 
 Vacation Tracker Client is written in C++ using the Qt tool kit.
 

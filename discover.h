@@ -66,7 +66,7 @@ signals:
 private slots:
 	void discoveryTimedOut(void);
 	void error(QZeroConf::error_t);
-	void startLogin(QZeroConfService *zcs);
+	void startLogin(QZeroConfService zcs);
 	void ok(void);
 	void cancel(void);
 	void loginFailed(void);

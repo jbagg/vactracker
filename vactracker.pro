@@ -6,6 +6,8 @@
  SOURCES+= depositparser.cpp withdrawalparser.cpp userparser.cpp regionparser.cpp regionyearparser.cpp
  win32: RC_ICONS = ptree.ico
 
+DEFINES+= QZEROCONF_STATIC
+
 include($$PWD/qtzeroconf/qtzeroconf.pri)
 
                  
